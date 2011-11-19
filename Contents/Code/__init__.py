@@ -93,7 +93,7 @@ def FolderListMenu(id, showName, showArt, name):
             oc.add(DirectoryObject(key = Callback(FolderListMenu, id = folderId, showName = showName, showArt = showArt, name = nodeName), title = nodeName, thumb = showArt))
         else:
         
-            if 'art' in xmlObj:
+            if 'art' in xmlObj.attrib:
                 nodeArt = xmlObj.attrib['art']
                 nodeArt = nodeArt.replace('size=tiny','size=large')
             else:
