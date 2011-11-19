@@ -16,6 +16,8 @@
 	<string>hook</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>PlexClientPlatforms</key>
+	<string>MacOSX,iOS</string>
 	<key>PlexFrameworkVersion</key>
 	<string>2</string>
 	<key>PlexMediaContainer</key>
@@ -31,16 +33,15 @@
 	</dict>
 	<key>PlexPluginMode</key>
 	<string>AlwaysOn</string>
-	<key>PlayOn</key>
+	<key>PlexURLServices</key>
 	<dict>
-		<key>URLPattern</key>
-		<string>http://192.168.1.107:54479/.+</string>
-		<key>Identifier</key>
-		<string>com.plexapp.plugins.playon</string>
-		<key>TestURLs</key>
-		<array>
-			<string>http://192.168.1.107:54479/playlaterrecordings-b14e25eeda314131985560913e4d82f7/main.m3u8</string>
-		</array>
+		<key>PlayOn</key>
+		<dict>
+			<key>URLPattern</key>
+			<string>http://[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\:[0-9]{1,5}/.+/main.m3u8</string>
+			<key>Identifier</key>
+			<string>com.plexapp.plugins.playon</string>
+		</dict>
 	</dict>
 	<key>PlexPluginDevMode</key>
 	<string>1</string>
