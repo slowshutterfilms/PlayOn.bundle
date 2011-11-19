@@ -1,0 +1,36 @@
+import re
+
+####################################################################################################
+#def MetadataObjectForURL(url):
+#    
+#    #pull the id from the url and connect to the server
+#    #get the title and artwork
+#    
+#    # Construct a metadata item
+#    vc = VideoClipObject(
+#      title = 'Test',
+#      summary = 'Desc',
+#      thumb = '',
+#      tags = ''
+#      )
+#    return vc
+#  
+####################################################################################################
+def MediaObjectsForURL(url):
+  
+  return [
+    MediaObject(
+      container = Container.MP4,
+      video_codec = VideoCodec.H264,
+      audio_codec = AudioCodec.AAC,
+      audio_channels = 2,
+      optimized_for_streaming = True,
+      parts = [PartObject(key=Callback(PlayVideo, id=url))],
+      protocol = Protocol.HTTPLiveStreaming
+    )
+  ]
+
+####################################################################################################
+
+def PlayVideo(id):
+  return Redirect(id)
