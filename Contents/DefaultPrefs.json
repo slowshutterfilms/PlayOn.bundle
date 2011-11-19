@@ -1,0 +1,14 @@
+[
+  {
+      "id": "playon_ip",
+      "type": "text",
+      "label": "IP",
+      "default": "" 
+  },
+  {
+      "id": "playon_port",
+      "type": "text",
+      "label": "Port",
+      "default": ""
+  }
+]
