@@ -56,20 +56,23 @@ def ChannelMainMenu():
     
     if Prefs['playon_ip'] and Prefs['playon_port']:
         
-        xmlResult = XML.ObjectFromURL(GetBaseUrl('/data/data.xml'), timeout = 120)
-        nodeList = xmlResult.xpath('/catalog/group')
-    
-        for xmlObj in nodeList:
-            channelName = xmlObj.attrib['name']
+        try:
+            xmlResult = XML.ObjectFromURL(GetBaseUrl('/data/data.xml'))
+            nodeList = xmlResult.xpath('/catalog/group')
             
-            channelHref = xmlObj.attrib['href']
-            idIndex = channelHref.find('id=')
-            channelId = channelHref[idIndex+3:]
-            
-            channelArt = xmlObj.attrib['art']
-            channelArtUrl = GetBaseUrl(channelArt)
-            
-            oc.add(DirectoryObject(key = Callback(FolderListMenu, id = channelId, showName = channelName, showArt = channelArtUrl, name = channelName), title = channelName, thumb = channelArtUrl))
+            for xmlObj in nodeList:
+                channelName = xmlObj.attrib['name']
+                
+                channelHref = xmlObj.attrib['href']
+                idIndex = channelHref.find('id=')
+                channelId = channelHref[idIndex+3:]
+                
+                channelArt = xmlObj.attrib['art']
+                channelArtUrl = GetBaseUrl(channelArt)
+                
+                oc.add(DirectoryObject(key = Callback(FolderListMenu, id = channelId, showName = channelName, showArt = channelArtUrl, name = channelName), title = channelName, thumb = channelArtUrl))
+        except:
+            Log.Error('Error connecting to the PlayOn server.')
     
     oc.add(PrefsObject(title='Preferences', thumb=R(ICON_PREFS), summary = 'Set the IP address and port number of your PlayOn server.'))
     
@@ -79,7 +82,7 @@ def ChannelMainMenu():
 def FolderListMenu(id, showName, showArt, name):
     oc = ObjectContainer(view_group='InfoList', title2 = showName)
     
-    xmlResult = XML.ObjectFromURL(GetBaseIdUrl(id), timeout = 120)
+    xmlResult = XML.ObjectFromURL(GetBaseIdUrl(id))
     nodeList = xmlResult.xpath('/group/group')
     for xmlObj in nodeList:
         nodeName = xmlObj.attrib['name']
@@ -99,7 +102,7 @@ def FolderListMenu(id, showName, showArt, name):
             else:
                 nodeArt=''
             
-            x = XML.ObjectFromURL(GetBaseIdUrl(folderId), timeout = 120)
+            x = XML.ObjectFromURL(GetBaseIdUrl(folderId))
             
             mediaTitleObj = x.xpath('/group/media_title')
             mediaTitle = mediaTitleObj[0].attrib['name']
