@@ -13,7 +13,7 @@ NAME = L('Title')
 # Default artwork and icon(s)
 ART           = 'art-default.jpg'
 ICON          = 'icon-default.png'
-NEXT          = 'icon-more.png'
+ICON_PREFS    = 'icon-prefs.png'
 
 ####################################################################################################
 def Start():
@@ -39,33 +39,39 @@ def Start():
 
 ####################################################################################################
 def GetBaseUrl(data):
-    return BASE_URL % ('http://192.168.1.107:54479', data)
+    URL = 'http://%s:%s' % (Prefs['playon_ip'], Prefs['playon_port'])
+    return BASE_URL % (URL, data)
 
 def GetBaseIdUrl(data):
-    return BASE_ID_URL % ('http://192.168.1.107:54479', data)
+    URL = 'http://%s:%s' % (Prefs['playon_ip'], Prefs['playon_port'])
+    return BASE_ID_URL % (URL, data)
 
 def GetBaseVideoUrl(data):
-    return BASE_VIDEO_URL % ('http://192.168.1.107:54479', data)
+    URL = 'http://%s:%s' % (Prefs['playon_ip'], Prefs['playon_port'])
+    return BASE_VIDEO_URL % (URL, data)
 
 ####################################################################################################
 def ChannelMainMenu():
     oc = ObjectContainer(view_group='InfoList')
     
-    xmlResult = XML.ObjectFromURL(GetBaseUrl('/data/data.xml'), timeout = 120)
-    nodeList = xmlResult.xpath('/catalog/group')
+    if Prefs['playon_ip'] and Prefs['playon_port']:
+        
+        xmlResult = XML.ObjectFromURL(GetBaseUrl('/data/data.xml'), timeout = 120)
+        nodeList = xmlResult.xpath('/catalog/group')
     
-    for xmlObj in nodeList:
-        channelName = xmlObj.attrib['name']
-        
-        channelHref = xmlObj.attrib['href']
-        idIndex = channelHref.find('id=')
-        channelId = channelHref[idIndex+3:]
-        
-        channelArt = xmlObj.attrib['art']
-        channelArtUrl = GetBaseUrl(channelArt)
-        Log.Debug('Show Art: %s' % channelArtUrl)
-        
-        oc.add(DirectoryObject(key = Callback(FolderListMenu, id = channelId, showName = channelName, showArt = channelArtUrl, name = channelName), title = channelName, thumb = channelArtUrl))
+        for xmlObj in nodeList:
+            channelName = xmlObj.attrib['name']
+            
+            channelHref = xmlObj.attrib['href']
+            idIndex = channelHref.find('id=')
+            channelId = channelHref[idIndex+3:]
+            
+            channelArt = xmlObj.attrib['art']
+            channelArtUrl = GetBaseUrl(channelArt)
+            
+            oc.add(DirectoryObject(key = Callback(FolderListMenu, id = channelId, showName = channelName, showArt = channelArtUrl, name = channelName), title = channelName, thumb = channelArtUrl))
+    
+    oc.add(PrefsObject(title='Preferences', thumb=R(ICON_PREFS), summary = 'Set the IP address and port number of your PlayOn server.'))
     
     return oc
 
@@ -90,16 +96,13 @@ def FolderListMenu(id, showName, showArt, name):
             if 'art' in xmlObj:
                 nodeArt = xmlObj.attrib['art']
                 nodeArt = nodeArt.replace('size=tiny','size=large')
-                Log.Debug('Video Art: %s' % GetBaseUrl(nodeArt))
             else:
                 nodeArt=''
-                Log.Debug('Video Art: None')
             
             x = XML.ObjectFromURL(GetBaseIdUrl(folderId), timeout = 120)
             
             mediaTitleObj = x.xpath('/group/media_title')
             mediaTitle = mediaTitleObj[0].attrib['name']
-            Log.Debug(mediaTitle)
             
             timeObj = x.xpath('/group/time')
             if len(timeObj) > 0:
