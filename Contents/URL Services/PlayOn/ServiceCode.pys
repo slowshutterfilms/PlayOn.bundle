@@ -1,21 +1,6 @@
 import re
 
 ####################################################################################################
-#def MetadataObjectForURL(url):
-#    
-#    #pull the id from the url and connect to the server
-#    #get the title and artwork
-#    
-#    # Construct a metadata item
-#    vc = VideoClipObject(
-#      title = 'Test',
-#      summary = 'Desc',
-#      thumb = '',
-#      tags = ''
-#      )
-#    return vc
-#  
-####################################################################################################
 def MediaObjectsForURL(url):
   
   return [
