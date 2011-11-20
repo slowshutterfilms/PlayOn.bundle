@@ -51,28 +51,41 @@ def GetBaseVideoUrl(data):
     return BASE_VIDEO_URL % (URL, data)
 
 ####################################################################################################
+def ValidatePrefs():
+    is_valid = re.match("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", Prefs['playon_ip'])
+    if not is_valid:
+        return MessageContainer("Error", "You entered an invalid IP address.")
+    
+    is_valid = re.match("^[0-9]{1,5}$", Prefs['playon_port'])
+    if not is_valid:
+        return MessageContainer("Error", "You entered an invalid port number.")
+
+####################################################################################################
 def ChannelMainMenu():
     oc = ObjectContainer(view_group='InfoList')
     
     if Prefs['playon_ip'] and Prefs['playon_port']:
         
-        try:
-            xmlResult = XML.ObjectFromURL(GetBaseUrl('/data/data.xml'))
-            nodeList = xmlResult.xpath('/catalog/group')
-            
-            for xmlObj in nodeList:
-                channelName = xmlObj.attrib['name']
+        invalidPrefs = (ValidatePrefs() != None)
+        
+        if not invalidPrefs:
+            try:
+                xmlResult = XML.ObjectFromURL(GetBaseUrl('/data/data.xml'))
+                nodeList = xmlResult.xpath('/catalog/group')
                 
-                channelHref = xmlObj.attrib['href']
-                idIndex = channelHref.find('id=')
-                channelId = channelHref[idIndex+3:]
-                
-                channelArt = xmlObj.attrib['art']
-                channelArtUrl = GetBaseUrl(channelArt)
-                
-                oc.add(DirectoryObject(key = Callback(FolderListMenu, id = channelId, showName = channelName, showArt = channelArtUrl, name = channelName), title = channelName, thumb = channelArtUrl))
-        except:
-            Log.Error('Error connecting to the PlayOn server.')
+                for xmlObj in nodeList:
+                    channelName = xmlObj.attrib['name']
+                    
+                    channelHref = xmlObj.attrib['href']
+                    idIndex = channelHref.find('id=')
+                    channelId = channelHref[idIndex+3:]
+                    
+                    channelArt = xmlObj.attrib['art']
+                    channelArtUrl = GetBaseUrl(channelArt)
+                    
+                    oc.add(DirectoryObject(key = Callback(FolderListMenu, id = channelId, showName = channelName, showArt = channelArtUrl, name = channelName), title = channelName, thumb = channelArtUrl))
+            except:
+                Log.Error('Error connecting to the PlayOn server.')
     
     oc.add(PrefsObject(title='Preferences', thumb=R(ICON_PREFS), summary = 'Set the IP address and port number of your PlayOn server.'))
     
